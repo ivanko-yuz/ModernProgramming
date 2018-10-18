@@ -16,37 +16,46 @@ func main() {
 
 type matrix [][]float64
 
-func zero(n int) matrix {
-	r := make([][]float64, n)
-	a := make([]float64, n*n)
+type MatrixFormatter struct {
+	numerOfRows int
+}
+
+func (mf MatrixFormatter) zero() matrix {
+	r := make([][]float64, mf.numerOfRows)
+	a := make([]float64, mf.numerOfRows*mf.numerOfRows)
 	for i := range r {
-		r[i] = a[n*i : n*(i+1)]
+		r[i] = a[mf.numerOfRows*i : mf.numerOfRows*(i+1)]
 	}
 	return r
 }
 
-func eye(n int) matrix {
-	r := zero(n)
+func (mf MatrixFormatter) eye() matrix {
+	r := make([][]float64, mf.numerOfRows)
+	a := make([]float64, mf.numerOfRows*mf.numerOfRows)
+	for i := range r {
+		r[i] = a[mf.numerOfRows*i : mf.numerOfRows*(i+1)]
+	}
 	for i := range r {
 		r[i][i] = 1
 	}
 	return r
 }
 
-func (m matrix) print(label string) {
-	if label > "" {
-		fmt.Printf("%s:\n", label)
-	}
-	for _, r := range m {
-		for _, e := range r {
-			fmt.Printf(" %9.5f", e)
-		}
-		fmt.Println()
-	}
-}
+// func (m matrix) print(label string) {
+// 	if label > "" {
+// 		fmt.Printf("%s:\n", label)
+// 	}
+// 	for _, r := range m {
+// 		for _, e := range r {
+// 			fmt.Printf(" %9.5f", e)
+// 		}
+// 		fmt.Println()
+// 	}
+// }
 
 func (a matrix) pivotize() matrix {
-	p := eye(len(a))
+	martixFormatter := MatrixFormatter{numerOfRows: len(a)}
+	p := martixFormatter.eye()
 	for j, r := range a {
 		max := r[j]
 		row := j
@@ -65,7 +74,8 @@ func (a matrix) pivotize() matrix {
 }
 
 func (m1 matrix) multiply(m2 matrix) matrix {
-	r := zero(len(m1))
+	martixFormatter := MatrixFormatter{numerOfRows: len(m1)}
+	r := martixFormatter.zero()
 	for i, r1 := range m1 {
 		for j := range m2 {
 			for k := range m1 {
@@ -77,8 +87,10 @@ func (m1 matrix) multiply(m2 matrix) matrix {
 }
 
 func (a matrix) lu() (l, u, p matrix) {
-	l = zero(len(a))
-	u = zero(len(a))
+	martixFormatter := MatrixFormatter{numerOfRows: len(a)}
+
+	l = martixFormatter.zero()
+	u = martixFormatter.zero()
 	p = a.pivotize()
 	a = p.multiply(a)
 	for j := range a {
@@ -101,15 +113,45 @@ func (a matrix) lu() (l, u, p matrix) {
 	return
 }
 
+type PrintManager struct {
+	matrix matrix
+}
+
+func (manager PrintManager) print(label string) {
+	if label > "" {
+		fmt.Printf("%s:\n", label)
+	}
+	for _, r := range manager.matrix {
+		for _, e := range r {
+			fmt.Printf(" %9.5f", e)
+		}
+		fmt.Println()
+	}
+}
+
 func showLU(a matrix) {
-	a.print("\na")
+	// a.print("\na")
+	a_printer := PrintManager{matrix: a}
+	a_printer.print("a")
+
 	l, u, p := a.lu()
 
-	result := l.multiply(u)
-	l.print("l")
-	u.print("u")
-	p.print("p")
+	l_printer := PrintManager{matrix: l}
+	l_printer.print("l")
 
-	result.print("res")
+	u_printer := PrintManager{matrix: u}
+	u_printer.print("u")
+
+	p_printer := PrintManager{matrix: p}
+	p_printer.print("p")
+
+	result := l.multiply(u)
+
+	result_printer := PrintManager{matrix: result}
+	result_printer.print("result")
+	// l.print("l")
+	// u.print("u")
+	// p.print("p")
+	// result.print("res")
 
 }
