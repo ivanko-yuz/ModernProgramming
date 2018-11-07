@@ -1,15 +1,23 @@
-package main
+package models
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"log"
-	"net/http"
+
+	"gopkg.in/mgo.v2/bson"
 )
+
+type Answer struct {
+	ID      bson.ObjectId `bson:"_id" json:"id"`
+	MatrixL matrix        `bson:"_id" json:"matrixl"`
+	MatrixU matrix        `bson:"_id" json:"matrixu"`
+}
 
 type matrix [][]float64
 
+type ResponceLUMatrixes struct {
+	MatrixL matrix
+	MatrixU matrix
+}
 type MatrixFormatter struct {
 	numerOfRows int
 }
@@ -17,12 +25,7 @@ type PrintManager struct {
 	Matrix matrix
 }
 
-type ResponceLUMatrixes struct {
-	MatrixL matrix
-	MatrixU matrix
-}
-
-func (manager PrintManager) print(label string) {
+func (manager PrintManager) Print(label string) {
 	if label > "" {
 		fmt.Printf("%s:\n", label)
 	}
@@ -32,38 +35,6 @@ func (manager PrintManager) print(label string) {
 		}
 		fmt.Println()
 	}
-}
-
-func calcLU(rw http.ResponseWriter, req *http.Request) {
-	body, err := ioutil.ReadAll(req.Body)
-	if err != nil {
-		panic(err)
-	}
-	log.Println(string(body))
-	var t PrintManager
-	err = json.Unmarshal(body, &t)
-	if err != nil {
-		panic(err)
-		print("ERROR")
-	}
-	println("Input:")
-	a_printer := PrintManager{Matrix: t.Matrix}
-	a_printer.print("t")
-	println("OUtput:")
-
-	data := showLU(t.Matrix)
-
-	jData, err := json.Marshal(data)
-	if err != nil {
-		// handle error
-	}
-	rw.Header().Set("Content-Type", "application/json")
-	rw.Write(jData)
-}
-
-func main() {
-	http.HandleFunc("/calcLU", calcLU)
-	log.Fatal(http.ListenAndServe(":8082", nil))
 }
 
 func (mf MatrixFormatter) zero() matrix {
@@ -147,26 +118,26 @@ func (a matrix) lu() (l, u, p matrix) {
 	return
 }
 
-func showLU(a matrix) ResponceLUMatrixes {
+func ShowLU(a matrix) ResponceLUMatrixes {
 	// a.print("\na")
 	a_printer := PrintManager{Matrix: a}
-	a_printer.print("a")
+	a_printer.Print("a")
 
 	l, u, p := a.lu()
 
 	l_printer := PrintManager{Matrix: l}
-	l_printer.print("l")
+	l_printer.Print("l")
 
 	u_printer := PrintManager{Matrix: u}
-	u_printer.print("u")
+	u_printer.Print("u")
 
 	p_printer := PrintManager{Matrix: p}
-	p_printer.print("p")
+	p_printer.Print("p")
 
 	result := l.multiply(u)
 
 	result_printer := PrintManager{Matrix: result}
-	result_printer.print("result")
+	result_printer.Print("result")
 
 	res := ResponceLUMatrixes{MatrixL: l, MatrixU: u}
 	return res
