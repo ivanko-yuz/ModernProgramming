@@ -54,7 +54,7 @@ function reloadMatrix() {
 
 function randomMatrix() {
 	let w = $("#width").val();
-	let max = 10;
+	let max = 5;
 	$("#matrix input").each((i, cell) => {
 		cell = $(cell);
 		if (!cell.hasClass('res')) {
@@ -65,8 +65,6 @@ function randomMatrix() {
 			}
 			else {
 				let rand = Math.random() * max;
-				// need spd for chol method
-				// diagonaly dominant is easier to generate
 				if (col == row) {
 					rand += w * max;
 				}
@@ -115,6 +113,7 @@ function runSolving() {
 		$.get(`/stop/${ID}`, () => {
 			ID = undefined;
 			$("#run").removeClass("stop");
+			$("#run").val("run");
 		})
 		return;
 	}
@@ -124,6 +123,7 @@ function runSolving() {
 	$.post("/start", {matrix, vector, delay}, id => {
 		ID = id;
 		$("#run").addClass("stop");
+		$("#run").val("stop");
 		pullResult();
 	});
 }
@@ -134,6 +134,7 @@ function pullResult() {
 		if (res.Result) {
 			ID = undefined;
 			$("#run").removeClass("stop");
+			$("#run").val("run");
 			setResult(res.Result);
 		}
 		setTimeout(pullResult, 500);

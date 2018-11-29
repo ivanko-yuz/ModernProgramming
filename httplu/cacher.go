@@ -62,11 +62,3 @@ func (s LinearSystem) Solve(callback ...func(interface{})) []float64 {
 	}
 	return x
 }
-
-// CREATE TABLE public.solutions
-// (
-//    hash integer NOT NULL,
-//    solution text NOT NULL,
-//    cached timestamp DEFAULT CURRENT_TIMESTAMP,
-//    CONSTRAINT "solutionsPK" PRIMARY KEY (hash)
-// )

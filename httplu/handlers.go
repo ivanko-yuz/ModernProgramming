@@ -43,20 +43,20 @@ func requestReader(r *http.Request) JSONLinSysReader {
 	return JSONLinSysReader{matrix, vector}
 }
 
-// func solveHandler(w http.ResponseWriter, r *http.Request) {
-// 	if r.URL.Path != "/solve" || r.Method != http.MethodPost {
-// 		http.NotFound(w, r)
-// 		return
-// 	}
-// 	fmt.Println("Processing solve request...")
+func solveHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/solve" || r.Method != http.MethodPost {
+		http.NotFound(w, r)
+		return
+	}
+	fmt.Println("Processing solve request...")
 
-// 	reader := requestReader(r)
-// 	x := readAndSolve(reader)
+	reader := requestReader(r)
+	x := readAndSolve(reader)
 
-// 	output, _ := json.Marshal(x)
-// 	w.Header().Set("Content-Type", "application/json")
-// 	w.Write(output)
-// }
+	output, _ := json.Marshal(x)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(output)
+}
 
 func recovery() {
 	if r := recover(); r != nil {
@@ -130,8 +130,6 @@ func resultHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.NotFound(w, r)
 	}
-	// too often to print every time
-	//fmt.Println("Processing result request...")
 
 	var res ReqOutput
 
