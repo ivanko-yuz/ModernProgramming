@@ -9,7 +9,7 @@ import (
 	. "../models"
 )
 
-func calcLU(rw http.ResponseWriter, req *http.Request) {
+func CalcLU(rw http.ResponseWriter, req *http.Request) {
 	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
 		panic(err)

@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+<HTML>
+<head>
+    <title>Linear System Solver</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <script type="text/javascript" src="/jquery.js"></script>
+    <script type="text/javascript" src="/script.js"></script>
+</head>
+	<body>
+		<div>
+			<input type="number" id="width" value="3" />
+			&times;
+			<input type="number" id="height" value="3" />
+			<input type="button" value="clear" onclick="reloadMatrix()"/>
+			<input type="button" value="generate" onclick="randomMatrix()"/>
+			<input type="button" id="run" value="RUN" onclick="runSolving()"/>
+
+		</div>
+		<hr>
+		<div>
+			<div id="matrix">
+			</div>
+		</div>
+		<hr>
+		<div >
+			<input style="visibility: hidden" type="number" id="delay" value="1" />
+		</div>
+
+	    <script type="text/javascript">
+			init();
+		</script>
+    </body>
+</HTML>
